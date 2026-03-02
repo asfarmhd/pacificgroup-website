@@ -1,0 +1,18 @@
+# OS and editor
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+.cursor/
+
+# Optional: uncomment if you keep env or secrets locally (never commit real FTP password)
+# .env
+# *.local
+
+# Dependencies / build (none for this static site; keep for future)
+node_modules/
+
+# Plan/spec files (optional; remove if you want them in repo)
+# .cursor/
+# *.plan.md

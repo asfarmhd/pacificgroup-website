@@ -1,0 +1,32 @@
+# Deploy Pacific Group site to Hostinger on push to main
+name: Deploy to Hostinger
+
+on:
+  push:
+    branches:
+      - main
+  # Uncomment if you use master as default branch:
+  #   - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: public_html/
+          exclude: |
+            .git/**
+            .github/**
+            .gitignore
+            *.md
+            .cursor/**
+            .DS_Store
