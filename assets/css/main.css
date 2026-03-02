@@ -968,25 +968,42 @@ main {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.72) 0%, rgba(248, 250, 252, 0.65) 50%, rgba(255, 255, 255, 0.7) 100%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.88) 50%, rgba(255, 255, 255, 0.9) 100%);
   z-index: 0;
   transition: opacity 0.4s var(--ease-out);
 }
 .business-card[class*="card-bg-"]:hover::after {
-  opacity: 0.55;
+  opacity: 0.65;
 }
 .business-card .business-logo,
 .business-card .business-content {
   position: relative;
   z-index: 1;
 }
+.business-card[class*="card-bg-"] .business-content {
+  background: rgba(255, 255, 255, 0.75);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 2px 16px rgba(15, 23, 42, 0.06);
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.business-card[class*="card-bg-"] .business-logo {
+  align-self: stretch;
+}
+.business-card[class*="card-bg-"] .business-content h2,
+.business-card[class*="card-bg-"] .business-content p {
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+}
 .business-card.card-bg-logistics { background-image: url("../images/sections/logistics.jpg"); }
 .business-card.card-bg-trade { background-image: url("../images/sections/tech-logistics.jpg"); }
 .business-card.card-bg-warehouse { background-image: url("../images/sections/warehouse.jpg"); }
 .business-card.card-bg-agri { background-image: url("../images/sections/crops.jpg"); }
 .business-card.card-bg-oil-terminal { background-image: url("../images/sections/sunrise-port.jpg"); }
-.business-card.card-bg-foods { background-image: url("../images/sections/tech-logistics.jpg"); }
-.business-card.card-bg-petroleum { background-image: url("../images/sections/windmills-sunset.jpg"); }
+.business-card.card-bg-foods { background-image: url("../images/companies/sts-foods.jpg"); }
+.business-card.card-bg-petroleum { background-image: url("../images/companies/pacific-petroleum.jpg"); }
 
 .business-logo {
   display: flex;
