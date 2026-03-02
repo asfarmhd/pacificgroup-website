@@ -651,6 +651,11 @@ main {
   width: 100%;
 }
 
+/* Center the single card in the third row (7th item in 3-col grid) */
+.home-business-card:last-child:nth-child(3n+1) {
+  grid-column: 2;
+}
+
 /* Highlight when scrolled to from nav (home page) */
 .home-businesses:target {
   animation: section-highlight 1.8s var(--ease-out-expo) forwards;
