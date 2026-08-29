@@ -41,9 +41,11 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
-          # The FTP account logs into the account home, not the web root.
-          # A dispatch can override this to probe for the true document root.
-          server-dir: ${{ inputs.server_dir != '' && inputs.server_dir || './public_html/' }}
+          # The deploy FTP account (u661830775.asfarmhd) is chrooted to
+          # /home/u661830775/domains/pacificgroup.pk/public_html, which IS the
+          # document root - so ./ is correct here. Do not "helpfully" append
+          # public_html/; that lands a level deeper and serves nothing.
+          server-dir: ${{ inputs.server_dir != '' && inputs.server_dir || './' }}
           timeout: 120000
           log-level: verbose
           # true only for a manual dry-run dispatch; a push always deploys for real

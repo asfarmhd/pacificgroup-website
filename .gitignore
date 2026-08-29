@@ -19,3 +19,8 @@ node_modules/
 
 # Local source-asset handoff (227 MB) - not part of the deployed site
 wordpress website content/
+
+# Never commit credentials
+creds.txt
+*creds*.txt
+.github/creds.txt
