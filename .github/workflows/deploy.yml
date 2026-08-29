@@ -37,11 +37,16 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
-          server-dir: ./
+          # The FTP account logs into the account home, NOT the web root.
+          # public_html/ is what actually serves pacificgroup.pk - deploying
+          # to ./ filled the home directory and served nothing for months.
+          server-dir: ./public_html/
           timeout: 120000
           log-level: verbose
           # true only for a manual dry-run dispatch; a push always deploys for real
-          dry-run: ${{ inputs.dry_run == true }}
+          # Tolerate both boolean (UI checkbox) and string (API/gh) inputs;
+          # a push sends neither, so it always deploys for real.
+          dry-run: ${{ inputs.dry_run == true || inputs.dry_run == 'true' }}
           exclude: |
             .git/**
             .github/**
