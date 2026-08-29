@@ -14,6 +14,10 @@ on:
         description: "Dry run (connect and report only, upload nothing)"
         type: boolean
         default: true
+      server_dir:
+        description: "Override server-dir (blank = use the default below)"
+        type: string
+        default: ""
 
 concurrency:
   group: deploy-hostinger
@@ -37,10 +41,9 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
-          # The FTP account logs into the account home, NOT the web root.
-          # public_html/ is what actually serves pacificgroup.pk - deploying
-          # to ./ filled the home directory and served nothing for months.
-          server-dir: ./public_html/
+          # The FTP account logs into the account home, not the web root.
+          # A dispatch can override this to probe for the true document root.
+          server-dir: ${{ inputs.server_dir != '' && inputs.server_dir || './public_html/' }}
           timeout: 120000
           log-level: verbose
           # true only for a manual dry-run dispatch; a push always deploys for real
