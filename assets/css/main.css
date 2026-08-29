@@ -716,7 +716,7 @@ main {
 
 .home-business-card-logo img {
   max-height: 200px;
-  max-width: 280px;
+  max-width: min(280px, 100%);
   width: auto;
   object-fit: contain;
 }
@@ -1023,7 +1023,7 @@ main {
 
 .business-logo img {
   max-height: 180px;
-  max-width: 280px;
+  max-width: min(280px, 100%);
   width: auto;
   object-fit: contain;
 }
@@ -1318,8 +1318,8 @@ main {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius);
   background: var(--color-border-soft);
   color: var(--color-text-muted);
@@ -1500,6 +1500,8 @@ main {
 }
 
 .footer-list a {
+  display: inline-block;
+  padding: 0.5rem 0;
   color: rgba(255, 255, 255, 0.88);
   font-size: 0.9375rem;
   transition: color var(--transition-fast);
@@ -1646,6 +1648,32 @@ main {
 @media (max-width: 768px) {
   .home-businesses-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+  }
+
+  /* 4rem/3rem padding on a ~135px card left the logo only 37px to sit in,
+     so the logo overflowed the tile. Scale the card down with the viewport. */
+  .home-business-card {
+    padding: var(--space-lg) var(--space-sm);
+  }
+
+  .home-business-card-logo {
+    min-height: 120px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .home-business-card-logo img {
+    max-height: 90px;
+  }
+
+  .home-business-card-name {
+    font-size: 1rem;
+  }
+
+  /* The 3-column centering rule pins the 7th card to column 2, which
+     leaves a hole beside it in a 2-column grid. Span it instead. */
+  .home-business-card:last-child:nth-child(3n+1) {
+    grid-column: 1 / -1;
   }
 
   .site-header {
@@ -1795,6 +1823,33 @@ main {
 @media (max-width: 480px) {
   .hero-cta {
     flex-direction: column;
+  }
+
+  .home-businesses-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm);
+  }
+
+  .home-business-card {
+    padding: var(--space-md) var(--space-xs);
+  }
+
+  .home-business-card-logo {
+    min-height: 96px;
+  }
+
+  .home-business-card-logo img {
+    max-height: 72px;
+  }
+
+  .home-business-card-name {
+    font-size: 0.9375rem;
+  }
+
+  .section-inner,
+  .businesses {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
   }
 
   .btn {
