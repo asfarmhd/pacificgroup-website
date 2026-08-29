@@ -16,3 +16,6 @@ node_modules/
 # Plan/spec files (optional; remove if you want them in repo)
 # .cursor/
 # *.plan.md
+
+# Local source-asset handoff (227 MB) - not part of the deployed site
+wordpress website content/

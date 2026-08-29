@@ -5,8 +5,12 @@ on:
   push:
     branches:
       - main
-  # Uncomment if you use master as default branch:
-  #   - master
+  # Allows deploying manually from the Actions tab without pushing a commit
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-hostinger
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -15,6 +19,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # The exclude list below drops the source-asset dumps (Images/,
+      # Company Logos/, Board Of Directors/, Client companies logos/ and the
+      # duplicate root .mp4). They stay in git, but nothing in the site
+      # references them, so skipping them cuts ~208 MB off every upload.
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -23,6 +31,8 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./
           server-dir: ./
+          timeout: 120000
+          log-level: verbose
           exclude: |
             .git/**
             .github/**
@@ -30,3 +40,10 @@ jobs:
             *.md
             .cursor/**
             .DS_Store
+            Images/**
+            Company Logos/**
+            Board Of Directors/**
+            Client companies logos/**
+            website content for sub companies/**
+            wordpress website content/**
+            Adobe Express - *.mp4
