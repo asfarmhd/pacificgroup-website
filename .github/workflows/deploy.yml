@@ -5,8 +5,15 @@ on:
   push:
     branches:
       - main
-  # Allows deploying manually from the Actions tab without pushing a commit
+  # Allows deploying manually from the Actions tab without pushing a commit.
+  # dry_run connects and authenticates, reports what WOULD change, and
+  # uploads nothing - use it to verify credentials without touching the site.
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (connect and report only, upload nothing)"
+        type: boolean
+        default: true
 
 concurrency:
   group: deploy-hostinger
@@ -33,6 +40,8 @@ jobs:
           server-dir: ./
           timeout: 120000
           log-level: verbose
+          # true only for a manual dry-run dispatch; a push always deploys for real
+          dry-run: ${{ inputs.dry_run == true }}
           exclude: |
             .git/**
             .github/**
