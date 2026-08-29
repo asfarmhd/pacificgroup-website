@@ -1171,6 +1171,18 @@ main {
   color: var(--color-text);
 }
 
+/* Role label under a director's name - matches .contact-card-label,
+   the treatment the rest of the site already uses for small labels. */
+.director-role {
+  display: block;
+  margin: calc(var(--space-md) * -0.55) 0 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+}
+
 .director-content p {
   margin: 0;
   font-size: 1.0625rem;
