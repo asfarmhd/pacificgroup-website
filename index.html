@@ -6,7 +6,12 @@
   <title>Pacific Group of Companies</title>
   <meta name="description" content="Pacific Group of Companies is a diversified business conglomerate operating across Pakistan in logistics, energy, agriculture, industrial, and trading — committed to excellence and sustainability.">
   <link rel="icon" type="image/png" href="assets/images/companies/pacific-group-logo.png">
-  <link rel="stylesheet" href="assets/css/main.css?v=8">
+  <link rel="preload" as="image" type="image/webp"
+        imagesrcset="assets/images/hero/office-atrium-640.webp 640w,
+                    assets/images/hero/office-atrium-960.webp 960w,
+                    assets/images/hero/office-atrium-1280.webp 1280w"
+        imagesizes="100vw">
+  <link rel="stylesheet" href="assets/css/main.css?v=14">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -39,11 +44,85 @@
 
   <main>
     <section class="hero">
-      <div class="hero-video-wrap" aria-hidden="true">
-        <video class="hero-video" autoplay muted loop playsinline preload="metadata"
-               poster="assets/images/sections/hero-poster.jpg" id="hero-video">
-          <source src="assets/video/hero.mp4" type="video/mp4">
-        </video>
+      <div class="hero-slideshow" aria-hidden="true">
+        <picture class="hero-slide is-active" data-tone="dark">
+          <source type="image/webp"
+                  srcset="assets/images/hero/office-atrium-640.webp 640w,
+                    assets/images/hero/office-atrium-960.webp 960w,
+                    assets/images/hero/office-atrium-1280.webp 1280w"
+                  sizes="100vw">
+          <img src="assets/images/hero/office-atrium-1280.jpg"
+               srcset="assets/images/hero/office-atrium-640.jpg 640w,
+                    assets/images/hero/office-atrium-960.jpg 960w,
+                    assets/images/hero/office-atrium-1280.jpg 1280w"
+               sizes="100vw" alt="" width="1280" height="852"
+               fetchpriority="high" decoding="async">
+        </picture>
+        <picture class="hero-slide" data-tone="dark">
+          <source type="image/webp"
+                  srcset="assets/images/hero/warehouse-bays-640.webp 640w,
+                    assets/images/hero/warehouse-bays-960.webp 960w,
+                    assets/images/hero/warehouse-bays-1280.webp 1280w"
+                  sizes="100vw">
+          <img src="assets/images/hero/warehouse-bays-1280.jpg"
+               srcset="assets/images/hero/warehouse-bays-640.jpg 640w,
+                    assets/images/hero/warehouse-bays-960.jpg 960w,
+                    assets/images/hero/warehouse-bays-1280.jpg 1280w"
+               sizes="100vw" alt="" width="1280" height="852"
+               loading="lazy" fetchpriority="low" decoding="async">
+        </picture>
+        <picture class="hero-slide" data-tone="bright">
+          <source type="image/webp"
+                  srcset="assets/images/hero/tanker-fleet-640.webp 640w,
+                    assets/images/hero/tanker-fleet-960.webp 960w,
+                    assets/images/hero/tanker-fleet-1280.webp 1280w"
+                  sizes="100vw">
+          <img src="assets/images/hero/tanker-fleet-1280.jpg"
+               srcset="assets/images/hero/tanker-fleet-640.jpg 640w,
+                    assets/images/hero/tanker-fleet-960.jpg 960w,
+                    assets/images/hero/tanker-fleet-1280.jpg 1280w"
+               sizes="100vw" alt="" width="1280" height="851"
+               loading="lazy" fetchpriority="low" decoding="async">
+        </picture>
+        <picture class="hero-slide" data-tone="dark">
+          <source type="image/webp"
+                  srcset="assets/images/hero/courtyard-640.webp 640w,
+                    assets/images/hero/courtyard-960.webp 960w,
+                    assets/images/hero/courtyard-1280.webp 1280w"
+                  sizes="100vw">
+          <img src="assets/images/hero/courtyard-1280.jpg"
+               srcset="assets/images/hero/courtyard-640.jpg 640w,
+                    assets/images/hero/courtyard-960.jpg 960w,
+                    assets/images/hero/courtyard-1280.jpg 1280w"
+               sizes="100vw" alt="" width="1280" height="852"
+               loading="lazy" fetchpriority="low" decoding="async">
+        </picture>
+        <picture class="hero-slide" data-tone="bright">
+          <source type="image/webp"
+                  srcset="assets/images/hero/grain-silo-640.webp 640w,
+                    assets/images/hero/grain-silo-960.webp 960w,
+                    assets/images/hero/grain-silo-1280.webp 1280w"
+                  sizes="100vw">
+          <img src="assets/images/hero/grain-silo-1280.jpg"
+               srcset="assets/images/hero/grain-silo-640.jpg 640w,
+                    assets/images/hero/grain-silo-960.jpg 960w,
+                    assets/images/hero/grain-silo-1280.jpg 1280w"
+               sizes="100vw" alt="" width="1280" height="832"
+               loading="lazy" fetchpriority="low" decoding="async">
+        </picture>
+        <picture class="hero-slide" data-tone="bright">
+          <source type="image/webp"
+                  srcset="assets/images/hero/oil-tanker-640.webp 640w,
+                    assets/images/hero/oil-tanker-960.webp 960w,
+                    assets/images/hero/oil-tanker-1280.webp 1280w"
+                  sizes="100vw">
+          <img src="assets/images/hero/oil-tanker-1280.jpg"
+               srcset="assets/images/hero/oil-tanker-640.jpg 640w,
+                    assets/images/hero/oil-tanker-960.jpg 960w,
+                    assets/images/hero/oil-tanker-1280.jpg 1280w"
+               sizes="100vw" alt="" width="1280" height="851"
+               loading="lazy" fetchpriority="low" decoding="async">
+        </picture>
       </div>
       <div class="hero-overlay" aria-hidden="true"></div>
       <div class="hero-content">
@@ -200,6 +279,6 @@
   </button>
 
   <script src="assets/js/contact-config.js"></script>
-  <script src="assets/js/main.js?v=4"></script>
+  <script src="assets/js/main.js?v=5"></script>
 </body>
 </html>

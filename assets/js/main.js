@@ -137,13 +137,67 @@
     });
   }
 
-  function initHeroVideo() {
-    var video = document.getElementById('hero-video');
-    if (!video) return;
-    video.muted = true;
-    video.playsInline = true;
-    video.play().catch(function () {});
-    video.addEventListener('canplay', function () { video.play().catch(function () {}); });
+  /* Cross-fading hero slideshow.
+     Degrades to the single .is-active slide already in the markup if JS
+     is unavailable, if there is only one slide, or if the visitor has
+     asked for reduced motion. Rotation pauses while the tab is hidden so
+     a backgrounded page isn't decoding images for nobody. */
+  function initHeroSlideshow() {
+    var root = document.querySelector('.hero-slideshow');
+    if (!root) return;
+
+    var slides = [].slice.call(root.querySelectorAll('.hero-slide'));
+    if (slides.length < 2) return;
+
+    var HOLD = 6000;
+    var motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var current = 0;
+    var timer = null;
+
+    function schedule() {
+      stop();
+      if (motionQuery.matches || document.hidden) return;
+      timer = setTimeout(advance, HOLD);
+    }
+
+    function stop() {
+      if (timer) { clearTimeout(timer); timer = null; }
+    }
+
+    function show(next) {
+      slides[current].classList.remove('is-active');
+      slides[next].classList.add('is-active');
+      current = next;
+    }
+
+    function advance() {
+      var next = (current + 1) % slides.length;
+      var img = slides[next].querySelector('img');
+      /* Decode off the main thread first so the cross-fade never reveals
+         a half-painted image on a slow connection. */
+      if (img && typeof img.decode === 'function') {
+        img.decode().then(function () { show(next); schedule(); },
+                          function () { show(next); schedule(); });
+      } else {
+        show(next);
+        schedule();
+      }
+    }
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop(); else schedule();
+    });
+
+    function onMotionChange() {
+      if (motionQuery.matches) stop(); else schedule();
+    }
+    if (motionQuery.addEventListener) {
+      motionQuery.addEventListener('change', onMotionChange);
+    } else if (motionQuery.addListener) {
+      motionQuery.addListener(onMotionChange);
+    }
+
+    schedule();
   }
 
   function initStatsCountUp() {
@@ -206,6 +260,6 @@
   initScrollReveal();
   initHeaderScroll();
   initBackToTop();
-  initHeroVideo();
+  initHeroSlideshow();
   initStatsCountUp();
 })();

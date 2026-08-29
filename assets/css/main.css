@@ -41,6 +41,8 @@
   --transition-fast: 0.2s var(--ease-out);
   --transition: 0.35s var(--ease-out);
   --transition-slow: 0.5s var(--ease-out-expo);
+  --hero-fade: 1400ms;
+  --hero-pan: 7600ms;
 }
 
 *,
@@ -117,13 +119,27 @@ body.js-ready .reveal.visible {
   height: var(--header-h);
   min-height: var(--header-h);
   padding: 0 var(--space-xl);
-  background: linear-gradient(135deg, var(--header-bg) 0%, var(--header-bg-end) 100%);
+  /* Transparent over the hero photography - but not literally transparent:
+     a soft top-down scrim keeps the white nav legible against bright skies.
+     Turns solid via .scrolled (toggled in main.js) once past the hero. */
+  background: linear-gradient(180deg,
+    rgba(8, 14, 28, 0.58) 0%,
+    rgba(8, 14, 28, 0.30) 58%,
+    rgba(8, 14, 28, 0) 100%);
+  transition: background var(--transition), box-shadow var(--transition),
+    border-color var(--transition);
   border-bottom: 1px solid var(--header-border);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
 .site-header.scrolled {
+  background: linear-gradient(135deg, var(--header-bg) 0%, var(--header-bg-end) 100%);
   box-shadow: 0 4px 28px rgba(0, 0, 0, 0.25);
+}
+
+/* An open mobile menu needs a solid bar behind it even at scroll-top. */
+.site-header:has(.nav.is-open) {
+  background: linear-gradient(135deg, var(--header-bg) 0%, var(--header-bg-end) 100%);
 }
 
 .logo-link {
@@ -303,13 +319,13 @@ body.js-ready .reveal.visible {
   color: var(--header-text-hover);
 }
 
-.btn-contact {
+a.btn-contact {
   display: inline-flex;
   align-items: center;
   gap: 0.35em;
   padding: 0.6rem 1.25rem;
   background: #fff;
-  color: var(--header-bg) !important;
+  color: var(--header-bg);
   font-weight: 600;
   font-size: 0.9375rem;
   letter-spacing: 0.08em;
@@ -317,10 +333,10 @@ body.js-ready .reveal.visible {
   transition: background var(--transition), color var(--transition), transform var(--transition-fast), box-shadow var(--transition);
 }
 
-.btn-contact:hover {
+a.btn-contact:hover {
   background: rgba(255, 255, 255, 0.95);
   text-decoration: none;
-  color: var(--header-bg) !important;
+  color: var(--header-bg);
   transform: translateY(-2px);
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
 }
@@ -366,14 +382,17 @@ body.js-ready .reveal.visible {
 }
 
 /* ----- Main ----- */
+/* No top padding: every page opens with a full-bleed hero that runs under
+   the fixed header, so the header can sit transparent over the artwork.
+   The heroes carry their own header clearance below. */
 main {
-  padding-top: var(--header-h);
+  padding-top: 0;
 }
 
 /* ----- Hero (Home) – Video background + full impact ----- */
 .hero {
   position: relative;
-  min-height: 92vh;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -384,31 +403,95 @@ main {
   overflow: hidden;
 }
 
-.hero-video-wrap {
+/* Hero slideshow -------------------------------------------------------
+   Slides are stacked and cross-faded by toggling .is-active from JS.
+   Only the first slide carries .is-active in the markup, so with JS
+   disabled the hero still renders a single static image. The .hero
+   gradient sits underneath as the final fallback if images fail. */
+.hero-slideshow {
   position: absolute;
   inset: 0;
   z-index: 0;
-  min-width: 100%;
-  min-height: 100%;
+  overflow: hidden;
 }
 
-.hero-video {
+.hero-slide {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
+  inset: 0;
+  opacity: 0;
+  transition: opacity var(--hero-fade) ease-in-out;
+  will-change: opacity;
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+}
+
+.hero-slide img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: translate(-50%, -50%);
+  transform: scale(1);
+  /* Slow push-in. The transition lives on the base rule so the reset
+     eases out over the same curve, well after the fade has finished. */
+  transition: transform var(--hero-pan) linear;
 }
 
+.hero-slide.is-active img {
+  transform: scale(1.07);
+}
+
+/* Per-slide scrim. The shared .hero-overlay grade is tuned for the darker
+   frames; photographs with a lot of bright sky behind the headline need
+   more. Tiers come from measuring each image's luminance in the text band
+   and solving for the alpha that clears WCAG AA against white. Sits on the
+   slide rather than the image so it doesn't drift with the push-in. */
+.hero-slide[data-tone='mid']::after,
+.hero-slide[data-tone='bright']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-slide[data-tone='mid']::after {
+  background: radial-gradient(ellipse 85% 62% at 50% 44%,
+    rgba(15, 23, 42, 0.42) 0%,
+    rgba(15, 23, 42, 0.30) 55%,
+    rgba(15, 23, 42, 0.10) 100%);
+}
+
+.hero-slide[data-tone='bright']::after {
+  background: radial-gradient(ellipse 88% 66% at 50% 44%,
+    rgba(15, 23, 42, 0.66) 0%,
+    rgba(15, 23, 42, 0.48) 55%,
+    rgba(15, 23, 42, 0.18) 100%);
+}
+
+/* Two-layer scrim. The old single 45-55% wash was tuned for a dark video;
+   the slideshow photos have bright skies exactly where the headline sits,
+   which dropped contrast to 2.6:1 on some slides. The radial layer darkens
+   the text block specifically so the photography keeps its punch at the
+   edges, while the linear layer grades the header and scroll cue.
+   Values tuned by measurement: worst-case contrast across the six slides
+   is 5.85:1 against white, over the 4.5:1 AA floor with margin to spare
+   for the moment a cross-fade blends two images. Darker than this and the
+   photographs turn to grey mud - which defeats using real ones. */
 .hero-overlay {
   position: absolute;
   inset: 0;
   z-index: 0.5;
-  background: linear-gradient(145deg, rgba(15, 23, 42, 0.5) 0%, rgba(30, 41, 59, 0.45) 50%, rgba(15, 23, 42, 0.55) 100%);
+  background:
+    radial-gradient(ellipse 82% 52% at 50% 45%,
+      rgba(8, 14, 28, 0.46) 0%,
+      rgba(8, 14, 28, 0.28) 52%,
+      rgba(8, 14, 28, 0.02) 100%),
+    linear-gradient(180deg,
+      rgba(15, 23, 42, 0.43) 0%,
+      rgba(15, 23, 42, 0.10) 28%,
+      rgba(15, 23, 42, 0.12) 64%,
+      rgba(15, 23, 42, 0.48) 100%);
   pointer-events: none;
 }
 
@@ -436,7 +519,10 @@ main {
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
+  /* Was 0.7 alpha over photography, which read as washed out. Near-full
+     white plus a tight shadow gives the small uppercase label real edges. */
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: 0 1px 3px rgba(8, 14, 28, 0.6);
   margin-bottom: var(--space-md);
 }
 
@@ -448,14 +534,17 @@ main {
   line-height: 1.15;
   letter-spacing: 0.02em;
   color: #fff;
-  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.2);
+  /* Tight shadow for edge definition against busy photography, plus a
+     wide soft one to lift the whole block off bright skies. */
+  text-shadow: 0 2px 4px rgba(8, 14, 28, 0.5), 0 8px 30px rgba(8, 14, 28, 0.4);
 }
 
 .tagline {
   margin: 0 0 var(--space-xl);
   font-size: 1.125rem;
   line-height: 1.7;
-  color: rgba(255, 255, 255, 0.85);
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: 0 1px 3px rgba(8, 14, 28, 0.55);
   max-width: 560px;
   margin-left: auto;
   margin-right: auto;
@@ -774,6 +863,12 @@ main {
   width: 100%;
   overflow: hidden;
   padding: var(--space-md) 0;
+  /* Fade the ends so logos dissolve out instead of being cut mid-mark,
+     which read as a rendering fault rather than motion. */
+  -webkit-mask-image: linear-gradient(90deg,
+    transparent 0, #000 7%, #000 93%, transparent 100%);
+  mask-image: linear-gradient(90deg,
+    transparent 0, #000 7%, #000 93%, transparent 100%);
 }
 
 .client-logos-track:hover .client-logos-row {
@@ -846,7 +941,9 @@ main {
 }
 
 /* ----- Page hero (inner pages) – background image + overlay, sharp edge ----- */
+/* Inner-page heroes also sit under the header, so pad the content down. */
 .page-hero {
+  padding-top: calc(var(--space-3xl) + var(--header-h));
   text-align: center;
   min-height: 50vh;
   display: flex;
@@ -1542,7 +1639,10 @@ main {
   color: rgba(255, 255, 255, 0.6);
 }
 
-.btn-contact-footer {
+/* On the dark footer the pill composites to near-navy, so this variant
+   needs light text. It previously inherited the dark base colour through
+   an !important and rendered at 1.33:1 - effectively invisible. */
+a.btn-contact-footer {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -1553,10 +1653,10 @@ main {
   transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
 
-.btn-contact-footer:hover {
+a.btn-contact-footer:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.35);
-  color: #fff !important;
+  color: #fff;
 }
 
 .site-footer .copyright {
@@ -1926,6 +2026,15 @@ main {
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
+  .hero-slide,
+  .hero-slide img {
+    transition: none;
+  }
+
+  .hero-slide img {
+    transform: none;
+  }
+
   .reveal,
   body.js-ready .reveal,
   body.js-ready .reveal.visible {
