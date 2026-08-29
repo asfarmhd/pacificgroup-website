@@ -1021,6 +1021,11 @@ main {
   transform: scale(1.02);
 }
 
+.business-logo,
+.business-content {
+  min-width: 0;
+}
+
 .business-logo img {
   max-height: 180px;
   max-width: min(280px, 100%);
@@ -1169,18 +1174,6 @@ main {
   font-weight: 700;
   letter-spacing: 0.02em;
   color: var(--color-text);
-}
-
-/* Role label under a director's name - matches .contact-card-label,
-   the treatment the rest of the site already uses for small labels. */
-.director-role {
-  display: block;
-  margin: calc(var(--space-md) * -0.55) 0 0;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--color-accent);
 }
 
 .director-content p {
@@ -1793,9 +1786,17 @@ main {
     padding: var(--space-2xl) var(--space-md);
   }
 
+  /* Desktop padding is 4rem/6rem; on a 390px screen that alone is 192px,
+     which forced the card wider than the viewport once logos got wider. */
   .business-card {
     grid-template-columns: 1fr;
     text-align: center;
+    padding: var(--space-xl) var(--space-md);
+    gap: var(--space-lg);
+  }
+
+  .business-content p {
+    text-align: left;
   }
 
   .business-logo {
@@ -1807,14 +1808,31 @@ main {
     max-width: 220px;
   }
 
+  /* 4rem/6rem padding left only 120px of a 278px card for text, so
+     paragraphs wrapped to 2-3 words and the page ran to 10,000px. */
   .director-card {
     grid-template-columns: 1fr;
     text-align: center;
+    padding: var(--space-xl) var(--space-md);
+    gap: var(--space-lg);
   }
 
   .director-photo {
-    max-width: 220px;
+    max-width: 200px;
     margin: 0 auto;
+  }
+
+  /* Centred headings read fine; centred body copy at this width does not. */
+  .director-content p {
+    text-align: left;
+  }
+
+  .board-cards {
+    padding: var(--space-2xl) var(--space-md);
+  }
+
+  .board-cards .section-inner {
+    gap: var(--space-lg);
   }
 
   .client-logos-track {
@@ -1871,6 +1889,38 @@ main {
 
   .hero-scroll {
     display: none;
+  }
+
+  .director-card {
+    padding: var(--space-lg) var(--space-sm);
+    gap: var(--space-md);
+  }
+
+  .business-card {
+    padding: var(--space-lg) var(--space-sm);
+  }
+
+  .businesses {
+    padding-left: var(--space-sm);
+    padding-right: var(--space-sm);
+  }
+
+  .director-photo {
+    max-width: 168px;
+  }
+
+  .director-content h2 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .director-content p {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+
+  .board-cards {
+    padding: var(--space-xl) var(--space-sm);
   }
 }
 
