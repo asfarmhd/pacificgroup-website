@@ -1951,8 +1951,12 @@ a.btn-contact-footer:hover {
 }
 
 @media (max-width: 480px) {
+  /* Switching to column moves the main axis vertical, so the base rule's
+     justify-content:center stops centring horizontally. Without this the
+     buttons stretch to their 280px max-width and sit left of centre. */
   .hero-cta {
     flex-direction: column;
+    align-items: center;
   }
 
   .home-businesses-grid {
