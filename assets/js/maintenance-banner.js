@@ -7,7 +7,7 @@
  * Only someone on the allowlisted IP ever sees it: everyone else is stopped
  * by the 503 rule in .htaccess and never loads these pages at all. Its job is
  * to make sure the one person who CAN still browse the site cannot forget
- * that the public is looking at the maintenance page.
+ * that to everyone else the site is simply down.
  *
  * Anchored to the bottom because .site-header is position:fixed at the top -
  * a banner up there would fight it.
@@ -60,17 +60,12 @@
 
     var detail = document.createElement('span');
     detail.textContent =
-      '— visitors are seeing the maintenance page. You can still browse because your IP is allowlisted.';
-
-    var preview = document.createElement('a');
-    preview.href = '/maintenance.html';
-    preview.textContent = 'View what they see';
+      '— the site is returning HTTP 503 to everyone else. You can still browse because your IP is allowlisted.';
 
     bar.appendChild(style);
     bar.appendChild(dot);
     bar.appendChild(label);
     bar.appendChild(detail);
-    bar.appendChild(preview);
     document.body.appendChild(bar);
 
     /* Keep the bar from covering the footer's last line, and lift the
