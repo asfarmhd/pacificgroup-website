@@ -1,0 +1,36 @@
+# ---------------------------------------------------------------------------
+# MAINTENANCE MODE - Pacific Group of Companies
+#
+# Written to /.htaccess by .github/workflows/deploy.yml when the workflow's
+# "maintenance" input is ticked. Do not edit this on the server; the next
+# deploy overwrites it.
+#
+# Everyone except the allowlisted IP gets HTTP 503 + the maintenance page.
+# 503 rather than 200 is deliberate: it tells search engines the outage is
+# temporary so the real pages keep their ranking. A 200 "coming soon" page
+# invites Google to index it AS the homepage.
+# ---------------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # The office IP passes straight through to the live site.
+  RewriteCond %{REMOTE_ADDR} !=202.47.45.251
+
+  # Never intercept the maintenance page itself, or the handful of assets
+  # it needs - otherwise the 503 page cannot render its own logo/background.
+  RewriteCond %{REQUEST_URI} !^/maintenance\.html$
+  RewriteCond %{REQUEST_URI} !^/assets/images/hero/
+  RewriteCond %{REQUEST_URI} !^/assets/images/companies/pacific-group-logo\.png$
+
+  RewriteRule ^ - [R=503,L]
+</IfModule>
+
+ErrorDocument 503 /maintenance.html
+
+<IfModule mod_headers.c>
+  # Tell crawlers roughly when to come back, and keep the outage out of
+  # any intermediate cache so turning maintenance off takes effect at once.
+  Header always set Retry-After "7200"
+  Header always set Cache-Control "no-store, must-revalidate"
+</IfModule>

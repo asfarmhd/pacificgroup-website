@@ -18,6 +18,10 @@ on:
         description: "Override server-dir (blank = use the default below)"
         type: string
         default: ""
+      maintenance:
+        description: "Maintenance mode ON (public sees the maintenance page; the allowlisted IP still sees the live site)"
+        type: boolean
+        default: false
 
 concurrency:
   group: deploy-hostinger
@@ -29,6 +33,42 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Picks which .htaccess ships, and - when maintenance is on - injects the
+      # banner script into the pages so whoever is allowlisted cannot browse
+      # the live site without noticing that the public cannot.
+      #
+      # NOTE: a plain push to main sends no inputs, so this evaluates false and
+      # takes the site LIVE. That is deliberate - maintenance can never be left
+      # on by accident - but it does mean pushing a fix during an outage ends
+      # the outage. To deploy while staying down, use "Run workflow" with
+      # maintenance ticked rather than pushing.
+      - name: Configure maintenance mode
+        env:
+          MAINTENANCE: ${{ inputs.maintenance == true || inputs.maintenance == 'true' }}
+        run: |
+          set -euo pipefail
+          if [ "$MAINTENANCE" = "true" ]; then
+            cp deploy/maintenance.htaccess .htaccess
+            for f in index.html our-businesses.html board-of-directors.html; do
+              sed -i 's#</body>#<script src="assets/js/maintenance-banner.js" defer></script></body>#' "$f"
+            done
+            {
+              echo "### MAINTENANCE MODE IS ON"
+              echo ""
+              echo "Public visitors receive HTTP 503 and the maintenance page."
+              echo "The allowlisted IP still sees the live site, with an on-page banner."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            cp deploy/live.htaccess .htaccess
+            {
+              echo "### Site is LIVE"
+              echo ""
+              echo "Maintenance rules cleared from .htaccess."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "--- .htaccess being deployed ---"
+          cat .htaccess
 
       # The exclude list below drops the source-asset dumps (Images/,
       # Company Logos/, Board Of Directors/, Client companies logos/ and the
@@ -59,6 +99,7 @@ jobs:
             *.md
             .cursor/**
             .DS_Store
+            deploy/**
             Images/**
             Company Logos/**
             Board Of Directors/**

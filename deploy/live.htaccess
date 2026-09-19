@@ -1,0 +1,10 @@
+# ---------------------------------------------------------------------------
+# LIVE - Pacific Group of Companies
+#
+# Written to /.htaccess by .github/workflows/deploy.yml whenever maintenance
+# mode is off, which includes every ordinary push to main.
+#
+# Deliberately minimal: LiteSpeed serves the static files directly and needs
+# no rewrite rules. Its only job is to overwrite the maintenance rules so the
+# site comes back up.
+# ---------------------------------------------------------------------------
