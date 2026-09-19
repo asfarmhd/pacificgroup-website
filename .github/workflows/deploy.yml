@@ -11,9 +11,14 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Dry run (connect and report only, upload nothing)"
+        # Defaulted to false deliberately. It used to default true, back when
+        # this panel only existed to verify FTP credentials. Once the panel
+        # also became the maintenance switch that default became a trap:
+        # ticking "maintenance" and pressing Run reported success while
+        # uploading nothing, so the site stayed up.
+        description: "Dry run - connect and report only, UPLOAD NOTHING (leave off to actually deploy)"
         type: boolean
-        default: true
+        default: false
       server_dir:
         description: "Override server-dir (blank = use the default below)"
         type: string
@@ -46,6 +51,7 @@ jobs:
       - name: Configure maintenance mode
         env:
           MAINTENANCE: ${{ inputs.maintenance == true || inputs.maintenance == 'true' }}
+          DRY_RUN: ${{ inputs.dry_run == true || inputs.dry_run == 'true' }}
         run: |
           set -euo pipefail
           if [ "$MAINTENANCE" = "true" ]; then
@@ -65,6 +71,14 @@ jobs:
               echo "### Site is LIVE"
               echo ""
               echo "Maintenance rules cleared from .htaccess."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ "$DRY_RUN" = "true" ]; then
+            {
+              echo ""
+              echo "> **DRY RUN - NOTHING WAS UPLOADED.**"
+              echo "> The state above was prepared but not sent to the server."
+              echo "> Untick \"Dry run\" and run again to apply it."
             } >> "$GITHUB_STEP_SUMMARY"
           fi
           echo "--- .htaccess being deployed ---"
